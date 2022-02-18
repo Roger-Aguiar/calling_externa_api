@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "z4la2BtvoRxqpQAtUZaYsRRW/XQ4m3tPeaRWEOmRIJ7I1ZxKtCLtVV5MxPzlsBPFXzFuOuZv1R2lshI79Q3RgQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\SQUADRA\\Desktop\\Studies\\DotNet\\CallingExternalWebApi\\CallingExternalWebApi.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\SQUADRA\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\SQUADRA\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.13\\microsoft.netcore.app.host.win-x64.5.0.13.nupkg.sha512"
+  ],
+  "logs": []
+}
