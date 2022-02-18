@@ -1,7 +1,9 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CallingExternalWebApi
 {
@@ -10,7 +12,7 @@ namespace CallingExternalWebApi
         public void GetUsersFromApi()
         {    
             string usersObject = null;        
-            WebRequest requestObject = WebRequest.Create("https://jsonplaceholder.typicode.com/users/1");
+            WebRequest requestObject = WebRequest.Create("https://jsonplaceholder.typicode.com/users/");
             requestObject.ContentType = "application/json; charset=utf-8";
             requestObject.Method = WebRequestMethods.Http.Get;         
             HttpWebResponse responseObject = (HttpWebResponse)requestObject.GetResponse();            
@@ -22,29 +24,33 @@ namespace CallingExternalWebApi
                 streamReader.Close();
             }
                        
-            Users user = JsonConvert.DeserializeObject<Users>(usersObject);   
-            //Users [] user = JsonConvert.DeserializeObject<Users[]>(usersObject);
+            Users [] users = JsonConvert.DeserializeObject<Users[]>(usersObject);
+            DisplayUsers(users);
+            Console.WriteLine($"{users.Length} users.");
         }
-
-        public void GetApis()
-        {
-            string usersObject = null;        
-            WebRequest requestObject = WebRequest.Create("https://api-sandbox.pottencial.com.br/products/v1/products/sensedia/apis");
-            requestObject.Credentials = new NetworkCredential("c3b9d872-d137-3f79-b801-8ac182f8379f", 
-                                                              "e57c37fc-236b-3204-9e54-aa25abde9111", 
-                                                              "85ba15ed-e5a9-3b2c-a45e-dbcfaa26a554");
-            requestObject.Method = "GET"; 
-            HttpWebResponse responseObject = (HttpWebResponse)requestObject.GetResponse();            
-            
-            using(Stream stream = responseObject.GetResponseStream())
-            {                
-                StreamReader streamReader = new StreamReader(stream);
-                usersObject = streamReader.ReadToEnd();
-                streamReader.Close();
+        
+        private void DisplayUsers(Users [] users)
+        {            
+            foreach(var user in users)
+            {
+                Console.WriteLine($"Id: {user.Id}");
+                Console.WriteLine($"Name: {user.Name}");
+                Console.WriteLine($"Email: {user.Email}");
+                Console.WriteLine($"Street: {user.Address.Street}");
+                Console.WriteLine($"Suite: {user.Address.Suite}");
+                Console.WriteLine($"City: {user.Address.City}");
+                Console.WriteLine($"Zip code: {user.Address.Zipcode}");
+                Console.WriteLine($"Geo => Lat: {user.Address.Geo.Lat}");
+                Console.WriteLine($"Geo => Lng: {user.Address.Geo.Lng}");
+                Console.WriteLine($"Phone: {user.Phone}");
+                Console.WriteLine($"Web site: {user.Website}");
+                Console.WriteLine($"Company name: {user.Company.Name}");
+                Console.WriteLine($"Company Catch Prase: {user.Company.CatchPhrase}");
+                Console.WriteLine($"Company Bs: {user.Company.Bs}");
+                Console.WriteLine("\n***************************************************************************************************\n");
             }
-
         }
-
+        
         //This is the correct form of filling an Object
         private Users CreateJsonUsers()
         {
