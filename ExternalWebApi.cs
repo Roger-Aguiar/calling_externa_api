@@ -2,90 +2,34 @@ using System;
 using System.IO;
 using System.Net;
 using Newtonsoft.Json;
-using System.Net.Http;
-using System.Text;
 
 namespace CallingExternalWebApi
 {
-    public class ExternalWebApi
+    public class ExternalWebApiUsers
     {
-        private readonly HttpClient client = new HttpClient();
-
-        private string clientId = null;
-        private string clientSecret = null;
-
-        public ExternalWebApi(string _clientId, string _clientSecret )
-        {
-            this.clientId = _clientId;
-            this.clientSecret = _clientSecret;
-        }
-
         public void GetUsersFromApi()
-        {    
-            string usersObject = null;        
+        {
+            string usersObject = null;
             WebRequest requestObject = WebRequest.Create("https://jsonplaceholder.typicode.com/users/");
             requestObject.ContentType = "application/json; charset=utf-8";
-            requestObject.Method = WebRequestMethods.Http.Get;         
-            HttpWebResponse responseObject = (HttpWebResponse)requestObject.GetResponse();            
-            
-            using(Stream stream = responseObject.GetResponseStream())
-            {                           
-                StreamReader streamReader = new StreamReader(stream);
-                usersObject = streamReader.ReadToEnd();
-                streamReader.Close();
-            }
-                       
-            Users [] users = JsonConvert.DeserializeObject<Users[]>(usersObject);
-            DisplayUsers(users);
-            Console.WriteLine($"{users.Length} users.");
-        }
-
-
-        public string GenerateAccessToken()
-        {
-            string newAccessToken = null;
-            WebRequest requestObject = WebRequest.Create("https://api-sandbox.pottencial.com.br/oauth/v3/access-token");
-            var encoded = System.Convert.ToBase64String(Encoding.GetEncoding("ISO-8859-1").GetBytes(clientId + ":" + clientSecret));
-            requestObject.Headers.Add("Authorization", "Basic " + encoded);
-            requestObject.ContentType = "application/json; charset=utf-8";
-            requestObject.Method = WebRequestMethods.Http.Post;
+            requestObject.Method = WebRequestMethods.Http.Get;
             HttpWebResponse responseObject = (HttpWebResponse)requestObject.GetResponse();
 
             using (Stream stream = responseObject.GetResponseStream())
             {
                 StreamReader streamReader = new StreamReader(stream);
-                newAccessToken = streamReader.ReadToEnd();
+                usersObject = streamReader.ReadToEnd();
                 streamReader.Close();
             }
 
-            AccessToken token = JsonConvert.DeserializeObject<AccessToken>(newAccessToken);
-            return token.Access_token;
-        }
-        
-        public void GetApiList()
-        {    
-            string apiObject = null;        
-            WebRequest requestObject = WebRequest.Create("https://api-sandbox.pottencial.com.br/products/v1/products/sensedia/apis");
-            //requestObject.Credentials = new NetworkCredential(clientId, clientSecret);
-            requestObject.ContentType = "application/json; charset=utf-8";
-            requestObject.Method = WebRequestMethods.Http.Get;         
-            HttpWebResponse responseObject = (HttpWebResponse)requestObject.GetResponse();            
-            
-            using(Stream stream = responseObject.GetResponseStream())
-            {                           
-                StreamReader streamReader = new StreamReader(stream);
-                apiObject = streamReader.ReadToEnd();
-                streamReader.Close();
-            }
-                       
-            /*Users [] users = JsonConvert.DeserializeObject<Users[]>(apiObject);
+            Users[] users = JsonConvert.DeserializeObject<Users[]>(usersObject);
             DisplayUsers(users);
-            Console.WriteLine($"{users.Length} users."); */
+            Console.WriteLine($"{users.Length} users.");
         }
-        
-        private void DisplayUsers(Users [] users)
-        {            
-            foreach(var user in users)
+
+        private void DisplayUsers(Users[] users)
+        {
+            foreach (var user in users)
             {
                 Console.WriteLine($"Id: {user.Id}");
                 Console.WriteLine($"Name: {user.Name}");
@@ -104,7 +48,7 @@ namespace CallingExternalWebApi
                 Console.WriteLine("\n***************************************************************************************************\n");
             }
         }
-        
+
         //This is the correct form of filling an Object
         private Users CreateJsonUsers()
         {
@@ -135,6 +79,5 @@ namespace CallingExternalWebApi
             };
             return users;
         }
-
     }
 }
