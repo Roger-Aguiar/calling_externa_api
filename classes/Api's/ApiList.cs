@@ -1,31 +1,12 @@
-/* namespace CallingExternalWebApi
+namespace CallingExternalWebApi
 {
-    public string GetApiList()
+    public class ApiList
     {
-        return "[
-            {
-                    "api": "financial",
-                "productsKey": "all"
-            },
-            {
-                    "api": "onboarding",
-                "productsKey": "all"
-            },
-            {
-                    "api": "riskobject",
-                "productsKey": "all"
-            },
-            {
-                    "api": "insurance",
-                "productsKey": [
-                    "residencial",
-                    "judicial-deposito-recursa",
-                    "judicial-deposito-recursal-substituicao",
-                    "garantia-bid",
-                    "garantia-performance",
-                    "imobiliario"
-                ]
-            }
-        ]";
+        private string api;
+
+        private string [] productsKey;
+        
+        public string Api { get => api; set => api = value; }
+        public string [] ProductsKey { get => productsKey; set => productsKey = value; }
     }
-} */
+}
