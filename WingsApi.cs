@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Net;
 using Newtonsoft.Json;
@@ -69,14 +68,6 @@ namespace CallingExternalWebApi
                 listOfBrokers.Add(api.Api);
             }
             return listOfBrokers;
-        }
-
-        public void DisplayListOfBrokers(List<string> listOfBrokers)
-        {
-            foreach (var broker in listOfBrokers)
-            {
-                Console.WriteLine(broker);
-            }
         }
     }
 }
