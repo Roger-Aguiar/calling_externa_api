@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CallingExternalWebApi
 {
@@ -6,31 +7,33 @@ namespace CallingExternalWebApi
     {
         static void Main(string[] args)
         {
-            Console.Write("Enter the client_id: ");
+            /* Console.Write("Enter the client_id: ");
             var client_id = Console.ReadLine();
             Console.Write("Enter the client_secret: ");
-            var client_secret = Console.ReadLine();
+            var client_secret = Console.ReadLine(); */
 
-            ExternalWebApi externalWebApi = new ExternalWebApi(client_id, client_secret);
+            //ExternalWebApi externalWebApi = new ExternalWebApi(client_id, client_secret);
+            ExternalWebApi externalWebApi = new ExternalWebApi("c3b9d872-d137-3f79-b801-8ac182f8379f", "e57c37fc-236b-3204-9e54-aa25abde9111");
+            var token = externalWebApi.GenerateAccessTokenBroker();
+            Console.WriteLine(token);
+            //var apiList = externalWebApi.GetApi();
+            //var listOfApis = externalWebApi.GetListOfApis(apiList);
+            //DisplayListOfApis(listOfApis);
 
-            ApiList[] apiList = externalWebApi.GetApi();
-            var listOfApis = externalWebApi.GetListOfApis(apiList);
-            DisplayListOfApis(apiList);
+            //Console.Write("\nSelect an API: ");
+            //var api = Console.ReadLine();
 
-            Console.Write("\nSelect an API: ");
-            var api = Console.ReadLine();
-
-            var listOfProductsOfApi = GetListOfProductsOfApi(api, apiList);
-            DisplayProductsOfApis(listOfProductsOfApi);
+            //var listOfProductsOfApi = GetListOfProductsOfApi(api, apiList);
+            //DisplayProductsOfApis(listOfProductsOfApi);
         }
 
-        static void DisplayListOfApis(ApiList[] apiList)
+        static void DisplayListOfApis(List<string> apiList)
         {
             Console.WriteLine('\n');
 
             foreach (var api in apiList)
             {
-                Console.WriteLine(api.Api);
+                Console.WriteLine(api);
             }
         }
 

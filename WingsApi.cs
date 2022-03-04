@@ -17,7 +17,7 @@ namespace CallingExternalWebApi
             this.clientSecret = _clientSecret;
         }
         
-        public ApiList[] GetApi()
+        public List<ApiList> GetApi()
         {
             string apiListResponse = null;
             var access_token = GenerateAccessToken();
@@ -36,7 +36,7 @@ namespace CallingExternalWebApi
                 streamReader.Close();
             }
 
-            ApiList[] apiList = JsonConvert.DeserializeObject<ApiList[]>(apiListResponse);
+            var apiList = JsonConvert.DeserializeObject<List<ApiList>>(apiListResponse);
             return apiList;
         }
         public string GenerateAccessToken()
@@ -60,14 +60,34 @@ namespace CallingExternalWebApi
             return token.Access_token;
         }
 
-        public List<string> GetListOfApis(ApiList[] apiList)
+        public List<string> GetListOfApis(List<ApiList> apiList)
         {
-            var listOfBrokers = new List<string>();
+            var listOfApis = new List<string>();
             foreach (var api in apiList)
-            {
-                listOfBrokers.Add(api.Api);
+            {                
+                listOfApis.Add(char.ToUpper(api.Api[0]) + api.Api.Substring(1));                
             }
-            return listOfBrokers;
+            return listOfApis;
+        }
+
+        public string GenerateAccessTokenBroker()
+        {
+            string newAccessToken = null;
+            WebRequest requestObject = WebRequest.Create("https://api-corporativo-dev.pottencial.com.br/cadastro/api/usuarios/pottencial-api/Potte@Api/2");
+           
+            requestObject.ContentType = "application/json; charset=utf-8";
+            requestObject.Method = WebRequestMethods.Http.Get;
+            HttpWebResponse responseObject = (HttpWebResponse)requestObject.GetResponse();
+
+            using (Stream stream = responseObject.GetResponseStream())
+            {
+                StreamReader streamReader = new StreamReader(stream);
+                newAccessToken = streamReader.ReadToEnd();
+                streamReader.Close();
+            }
+
+            AccessTokenBroker token = JsonConvert.DeserializeObject<AccessTokenBroker>(newAccessToken);
+            return token.Token;
         }
     }
 }
