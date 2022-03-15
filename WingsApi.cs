@@ -3,10 +3,12 @@ using System.Net;
 using Newtonsoft.Json;
 using System.Text;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 namespace CallingExternalWebApi
 {
-    public class ExternalWebApi
+    public class ExternalWebApi : IWings
     {
         private string clientId = null;
         private string clientSecret = null;
@@ -70,9 +72,31 @@ namespace CallingExternalWebApi
             return listOfApis;
         }
 
+        public Broker GetBrokers()
+        {
+            string brokerListResponse = null;
+            var token = GenerateAccessTokenBroker();
+            var brokerListRequest = WebRequest.Create("https://api-corporativo-dev.pottencial.com.br/cadastro/api/corretoras?nome=%");
+            var httpWebRequest = (HttpWebRequest)brokerListRequest;
+            httpWebRequest.Accept = "application/json";
+            httpWebRequest.Headers["Authorization"] = $"Bearer {token}";
+
+            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+
+            using (Stream stream = httpResponse.GetResponseStream())
+            {
+                StreamReader streamReader = new StreamReader(stream);
+                brokerListResponse = streamReader.ReadToEnd();
+                streamReader.Close();
+            }
+            
+            var brokerList = JsonConvert.DeserializeObject<Broker>(brokerListResponse);            
+            return brokerList;
+        }
+
         public string GenerateAccessTokenBroker()
         {
-            string newAccessToken = null;
+            string accessToken = null;
             WebRequest requestObject = WebRequest.Create("https://api-corporativo-dev.pottencial.com.br/cadastro/api/usuarios/pottencial-api/Potte@Api/2");
            
             requestObject.ContentType = "application/json; charset=utf-8";
@@ -82,12 +106,76 @@ namespace CallingExternalWebApi
             using (Stream stream = responseObject.GetResponseStream())
             {
                 StreamReader streamReader = new StreamReader(stream);
-                newAccessToken = streamReader.ReadToEnd();
+                accessToken = streamReader.ReadToEnd();
                 streamReader.Close();
             }
 
-            AccessTokenBroker token = JsonConvert.DeserializeObject<AccessTokenBroker>(newAccessToken);
+            AccessTokenBroker token = JsonConvert.DeserializeObject<AccessTokenBroker>(accessToken);
             return token.Token;
+        }
+
+        public List<string> GetListOfBrokers(BrokerResult[] brokersResult)
+        {
+            var brokers = new List<string>();
+
+            foreach (var broker in brokersResult)
+            {
+                brokers.Add(broker.NomePessoa);                
+            }
+            
+            brokers.Sort();
+            return brokers;
+        }
+
+        public void DisplayListOfApis(List<string> apiList)
+        {
+            Console.WriteLine('\n');
+
+            foreach (var api in apiList)
+            {
+                Console.WriteLine(api);
+            }
+        }
+
+        public string[] GetListOfProductsByApi(string api, ApiList[] apiList)
+        {
+            string[] products = null;
+
+            foreach (var item in apiList)
+            {
+                if (item.Api.ToUpper() == api.ToUpper())
+                {
+                    products = item.ProductsKey;
+                }
+            }
+            return products;
+        }
+
+        public void DisplayProductsOfApis(string[] productsKey)
+        {
+            Console.WriteLine();
+            Array.Sort(productsKey, StringComparer.InvariantCulture);
+
+            foreach (var product in productsKey)
+            {                
+                string newProduct = null;                
+                string [] splitProducts = product.Split(' ', '-');
+                
+                foreach (var splitProduct in splitProducts)
+                {
+                    newProduct += char.ToUpper(splitProduct[0]) + splitProduct.Substring(1) + " ";
+                }
+                Console.WriteLine(newProduct);
+            }
+        }
+
+        public string GetCnpjOfBroker(string broker, BrokerResult[] brokersResult)
+        {                      
+            var cnpj = from selectedBroker in brokersResult
+                       where selectedBroker.NomePessoa == broker
+                       select selectedBroker.CpfCnpj.ToString();
+                                   
+            return cnpj.ElementAt(0);
         }
     }
 }
